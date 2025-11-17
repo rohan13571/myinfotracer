@@ -1,0 +1,105 @@
+# ============================================================
+#                  MyInfoTracer - Info Gathering
+#            (Ethical – For Education & Legal Use Only)
+# ============================================================
+
+import requests
+import socket
+import whois
+import dns.resolver
+import json
+
+# -------------------------------------
+# BANNER
+# -------------------------------------
+def banner():
+    print("""
+ __  __       _____        __             ______                       
+|  \/  |     |_   _|      / _|           |  ____|                      
+| \  / |_   _  | |  _ __ | |_ ___  ___   | |__ _ __ __ _  ___ ___ _ __ 
+| |\/| | | | | | | | '_ \|  _/ _ \/ _ \  |  __| '__/ _` |/ __/ _ \ '__|
+| |  | | |_| |_| |_| | | | ||  __/ (_) | | |  | | | (_| | (_|  __/ |   
+|_|  |_|\__, |_____|_| |_|_| \___|\___/  |_|  |_|  \__,_|\___\___|_|   
+         __/ |                                                         
+        |___/           MyInfoTracer v1.0
+    """)
+
+# -------------------------------------
+# IP INFO (API)
+# -------------------------------------
+def ip_info(ip):
+    print("\n[+] Getting IP Information...\n")
+    try:
+        url = f"http://ip-api.com/json/{ip}"
+        data = requests.get(url).json()
+        for k, v in data.items():
+            print(f"{k}: {v}")
+    except:
+        print("Failed to get IP information.")
+
+# -------------------------------------
+# DNS LOOKUP
+# -------------------------------------
+def dns_lookup(domain):
+    print("\n[+] DNS Lookup:\n")
+    try:
+        ip = socket.gethostbyname(domain)
+        print("A Record:", ip)
+    except:
+        print("DNS Resolve Failed.")
+
+    for rtype in ["NS", "MX", "TXT"]:
+        try:
+            records = dns.resolver.resolve(domain, rtype)
+            for r in records:
+                print(f"{rtype}: {r}")
+        except:
+            pass
+
+# -------------------------------------
+# WHOIS
+# -------------------------------------
+def whois_lookup(domain):
+    print("\n[+] WHOIS Information:\n")
+    try:
+        w = whois.whois(domain)
+        print(w)
+    except:
+        print("WHOIS Lookup Failed.")
+
+# -------------------------------------
+# MAIN MENU
+# -------------------------------------
+def menu():
+    banner()
+    print("""
+1) IP Information
+2) Domain WHOIS
+3) DNS Lookup
+4) Exit
+""")
+
+    choice = input("Select Option: ")
+
+    if choice == "1":
+        ip = input("Enter IP: ")
+        ip_info(ip)
+
+    elif choice == "2":
+        domain = input("Enter domain: ")
+        whois_lookup(domain)
+
+    elif choice == "3":
+        domain = input("Enter domain: ")
+        dns_lookup(domain)
+
+    else:
+        print("Goodbye!")
+        exit()
+
+# LOOP
+while True:
+    menu()
+    again = input("\nRun Again? (y/n): ")
+    if again.lower() != "y":
+        break
